@@ -20,7 +20,39 @@ async function main() {
     if (liff.getOS() === 'android') {
       body.style.backgroundColor = '#888888';
     }
+    if (liff.isInClient()) {
+      getUserProfile();
+    }
+    btnShare.style.display = 'block';
   });
+
   await liff.init({ liffId: '1656641765-MYeg7wkn' });
 }
 main();
+
+async function getUserProfile() {
+  const profile = await liff.getProfile();
+  pictureUrl.src = profile.pictureUrl;
+  userId.innerHTML = '<b>userID : </b>' + profile.userId;
+  displayName.innerHTML = '<b>displayName : </b>' + profile.displayName;
+  statusMessage.innerHTML = '<b>statusMessage : </b>' + profile.statusMessage;
+}
+
+async function shareMsg() {
+  const result = await liff.shareTargetPicker([
+    {
+      type: 'text',
+      text: 'This msg was shared by LIFF',
+    },
+  ]);
+  if (result) {
+    alert('Msg was shared!');
+  } else {
+    alert('ShareTargetPicker was cancelled by user');
+  }
+  liff.closeWindow();
+}
+
+btnShare.onclick = () => {
+  shareMsg();
+};
